@@ -6,7 +6,9 @@ import br.com.gallium.core.model.Funcionario;
 import br.com.gallium.core.model.LojaDeRoupa;
 import br.com.gallium.core.repository.FuncionarioRepository;
 import br.com.gallium.core.repository.LojaDeRoupaRepository;
+import br.com.gallium.core.service.StorageService;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -42,6 +44,15 @@ public class CoreApplication {
             funcionarioRepository.save(funcionario1);
             funcionarioRepository.save(funcionario2);
             funcionarioRepository.save(funcionario3);
+        };
+    }
+
+
+    @Bean
+    ApplicationRunner initUploadFolder(StorageService storageService) {
+        return (args) -> {
+            storageService.deleteAll();
+            storageService.init();
         };
     }
 }
