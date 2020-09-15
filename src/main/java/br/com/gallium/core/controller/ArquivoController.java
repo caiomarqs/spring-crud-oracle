@@ -18,7 +18,7 @@ import br.com.gallium.core.exception.StorageFileNotFoundException;
 import br.com.gallium.core.service.StorageService;
 
 @Controller
-@RequestMapping("/arquivo")
+@RequestMapping("arquivo")
 public class ArquivoController {
 
     private final StorageService storageService;
@@ -43,25 +43,35 @@ public class ArquivoController {
                                             .collect(Collectors.toList())
                             );
 
-        return "arquvio/index";
+        return "arquivo/index";
     }
 
     @GetMapping("/files/{filename:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
-
         Resource file = storageService.loadAsResource(filename);
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+
+        return ResponseEntity
+                .ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" + file.getFilename() + "\"")
+                .body(file);
     }
 
     @PostMapping
     public String handleFileUpload(@RequestParam("file") MultipartFile file,
                                    RedirectAttributes redirectAttributes) {
 
-        storageService.store(file);
-        redirectAttributes.addFlashAttribute("message",
-                "You successfully uploaded " + file.getOriginalFilename() + "!");
+        if(file.isEmpty()){
+            redirectAttributes.addFlashAttribute("messageError","Não existe nenhum arquivo para ser salvo!");
+        }
+        else{
+            try {
+                storageService.store(file);
+                redirectAttributes.addFlashAttribute("message","Arquivo " + file.getOriginalFilename() + " salvo com sucesso!");
+            }catch (Exception e){
+                redirectAttributes.addFlashAttribute("messageError","Arquivo já existente ou não foi possivel fazer o upload o arquivo!");
+            }
+        }
 
         return "redirect:/arquivo";
     }

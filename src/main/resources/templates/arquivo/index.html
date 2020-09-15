@@ -10,22 +10,25 @@
 </head>
 <body>
 <div layout:fragment="body">
-    <div th:if="${message}">
-        <h2 th:text="${message}"/>
-    </div>
+
+    <p th:if="${message != null}" th:text="${message}" class="mb-4 mt-4 alert alert-success"></p>
+
+    <p th:if="${messageError != null}" th:text="${messageError}" class="mb-4 mt-4 alert alert-danger"></p>
 
     <div>
-        <form method="POST" enctype="multipart/form-data" action="/">
-            <table>
-                <tr><td>File to upload:</td><td><input type="file" name="file" /></td></tr>
-                <tr><td></td><td><input type="submit" value="Upload" /></td></tr>
-            </table>
+        <form method="POST" enctype="multipart/form-data" th:action="@{/arquivo}" class="form-inline mt-2">
+            <div class="form-group">
+                    <label for="file">Faça o upload do aquivo</label>
+                    <input type="file" name="file" id="file" class="form-control-file"/>
+
+                    <input type="submit" value="Upload" class="btn btn-outline-primary mt-2"/>
+            </div>
         </form>
     </div>
 
     <div>
-        <ul>
-            <li th:each="file : ${files}">
+        <ul class="list-group list-group-flush mt-4">
+            <li th:each="file : ${files}" class="list-group-item">
                 <a th:href="${file}" th:text="${file}" />
             </li>
         </ul>
